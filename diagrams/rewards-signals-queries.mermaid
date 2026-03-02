@@ -1,0 +1,63 @@
+%% Rewards Program — Signal & Query Interaction Pattern
+%% View at https://mermaid.live or in any Mermaid-compatible renderer
+
+sequenceDiagram
+    participant App as Client App
+    participant T as Temporal Server
+    participant W as RewardsWorkflow
+    participant E as Email Service
+    participant R as Rewards Fulfillment
+
+    App->>T: Start Workflow (rewards-customer-42)
+    T->>W: Initialize (100 pts welcome bonus)
+    W->>E: send_welcome_email()
+    E-->>W: ✅ Sent
+    Note over W: State: 100 pts, BASIC<br/>Waiting for signals...
+
+    rect rgb(220, 235, 255)
+        Note over App,W: Signal: Earn Points
+        App->>T: Signal: add_points(200, "purchase")
+        T->>W: Deliver signal
+        Note over W: State: 300 pts, BASIC
+    end
+
+    rect rgb(220, 235, 255)
+        Note over App,W: Signal: Earn Points (triggers tier upgrade)
+        App->>T: Signal: add_points(250, "purchase")
+        T->>W: Deliver signal
+        Note over W: 550 pts ≥ 500 → GOLD!
+        W->>E: send_tier_change_notification(BASIC → GOLD)
+        E-->>W: ✅ Sent
+        Note over W: State: 550 pts, GOLD
+    end
+
+    rect rgb(255, 250, 220)
+        Note over App,W: Query: Check Status (synchronous, no side effects)
+        App->>T: Query: get_status()
+        T->>W: Execute query handler
+        W-->>T: {points: 550, tier: GOLD, history: [...]}
+        T-->>App: MembershipState
+        Note over App: Display in UI
+    end
+
+    rect rgb(255, 230, 230)
+        Note over App,W: Signal: Redeem Points
+        App->>T: Signal: redeem_points(100, "$10 credit")
+        T->>W: Deliver signal
+        W->>R: apply_reward_redemption(100 pts)
+        R-->>W: ✅ Applied
+        Note over W: State: 450 pts, GOLD → BASIC (downgrade)
+        W->>E: send_tier_change_notification(GOLD → BASIC)
+        E-->>W: ✅ Sent
+    end
+
+    rect rgb(255, 220, 220)
+        Note over App,W: Signal: Leave Program
+        App->>T: Signal: leave_program()
+        T->>W: Deliver signal
+        W->>R: process_offboarding()
+        R-->>W: ✅ Complete
+        Note over W: Workflow completes
+        W-->>T: Final MembershipState
+        T-->>App: Result
+    end

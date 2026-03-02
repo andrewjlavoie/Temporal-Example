@@ -1,0 +1,37 @@
+%% E-Commerce Order Workflow — Saga Pattern with Compensation
+%% View at https://mermaid.live or in any Mermaid-compatible renderer
+
+sequenceDiagram
+    participant C as Client
+    participant W as OrderWorkflow
+    participant P as Payment Service
+    participant I as Inventory Service
+    participant S as Shipping Service
+    participant N as Notification Service
+
+    C->>W: Start Workflow (order-ORD-12345)
+    Note over W: Status: PENDING
+
+    rect rgb(200, 235, 200)
+        Note over W: Happy Path
+        W->>P: process_payment($2,548.99)
+        P-->>W: ✅ txn_abc123
+        Note over W: Status: PAYMENT_PROCESSED
+
+        W->>I: reserve_inventory([MacBook, Sleeve])
+        I-->>W: ✅ res_def456
+        Note over W: Status: INVENTORY_RESERVED
+
+        W->>S: ship_package()
+        Note over S: heartbeat: "Creating label..."
+        Note over S: heartbeat: "Validating address..."
+        Note over S: heartbeat: "Dispatching..."
+        S-->>W: ✅ TRK-FEDEX-789
+        Note over W: Status: SHIPPED
+
+        W->>N: notify_customer(tracking: TRK-FEDEX-789)
+        N-->>W: ✅ email sent
+        Note over W: Status: COMPLETED
+    end
+
+    W-->>C: {status: completed, tracking: TRK-FEDEX-789}
