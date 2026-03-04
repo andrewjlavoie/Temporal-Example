@@ -6,7 +6,7 @@ import asyncio
 
 from temporalio import activity
 
-from .models import RewardTier
+from rewards.models import RewardTier
 
 
 @activity.defn

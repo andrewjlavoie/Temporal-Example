@@ -6,7 +6,7 @@ import logging
 from temporalio.client import Client
 from temporalio.worker import Worker
 
-from .activities import (
+from ecommerce.activities import (
     cancel_shipment,
     notify_customer,
     process_payment,
@@ -15,7 +15,7 @@ from .activities import (
     reserve_inventory,
     ship_package,
 )
-from .workflows import OrderWorkflow
+from ecommerce.workflows import OrderWorkflow
 
 TASK_QUEUE = "ecommerce-order-queue"
 

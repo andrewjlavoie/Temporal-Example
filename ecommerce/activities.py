@@ -11,11 +11,11 @@ For this demo, all interactions are mocked.
 
 import asyncio
 import uuid
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from temporalio import activity
 
-from .models import (
+from ecommerce.models import (
     InventoryResult,
     NotificationResult,
     OrderInput,
@@ -90,7 +90,7 @@ async def ship_package(order: OrderInput) -> ShippingResult:
     activity.heartbeat("Dispatching package...")
     await asyncio.sleep(0.5)
 
-    delivery_date = datetime.utcnow() + timedelta(days=5)
+    delivery_date = datetime.now(UTC) + timedelta(days=5)
 
     return ShippingResult(
         tracking_number=f"TRK{uuid.uuid4().hex[:10].upper()}",

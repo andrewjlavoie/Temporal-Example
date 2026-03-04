@@ -6,13 +6,13 @@ import logging
 from temporalio.client import Client
 from temporalio.worker import Worker
 
-from .activities import (
+from rewards.activities import (
     apply_reward_redemption,
     process_offboarding,
     send_tier_change_notification,
     send_welcome_email,
 )
-from .workflows import RewardsWorkflow
+from rewards.workflows import RewardsWorkflow
 
 TASK_QUEUE = "rewards-program-queue"
 

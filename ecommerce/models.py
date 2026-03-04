@@ -1,7 +1,7 @@
 """Data models for the e-commerce order workflow."""
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import StrEnum
 
 
@@ -53,7 +53,7 @@ class PaymentResult:
     transaction_id: str
     amount_charged: float
     status: str
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -61,7 +61,7 @@ class InventoryResult:
     reservation_id: str
     items_reserved: list[str]
     warehouse_id: str
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -69,7 +69,7 @@ class ShippingResult:
     tracking_number: str
     carrier: str
     estimated_delivery: str
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -77,4 +77,4 @@ class NotificationResult:
     notification_id: str
     channel: str
     status: str
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())

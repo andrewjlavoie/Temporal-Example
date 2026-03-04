@@ -2,19 +2,19 @@
 
 Usage:
     # Happy path — all steps succeed
-    python -m ecommerce.starter
+    uv run python ecommerce/starter.py
 
     # Fail at shipping — triggers compensation (refund + release inventory)
-    python -m ecommerce.starter --fail-at shipping
+    uv run python ecommerce/starter.py --fail-at shipping
 
     # Fail at inventory — triggers compensation (refund only)
-    python -m ecommerce.starter --fail-at inventory
+    uv run python ecommerce/starter.py --fail-at inventory
 
     # Fail at payment — no compensation needed (nothing to undo)
-    python -m ecommerce.starter --fail-at payment
+    uv run python ecommerce/starter.py --fail-at payment
 
     # Fail at notification — non-critical, order still completes
-    python -m ecommerce.starter --fail-at notification
+    uv run python ecommerce/starter.py --fail-at notification
 """
 
 import argparse
@@ -23,9 +23,9 @@ import uuid
 
 from temporalio.client import Client
 
-from .models import OrderInput, OrderItem
-from .worker import TASK_QUEUE
-from .workflows import OrderWorkflow
+from ecommerce.models import OrderInput, OrderItem
+from ecommerce.worker import TASK_QUEUE
+from ecommerce.workflows import OrderWorkflow
 
 
 async def main(fail_at: str | None = None):

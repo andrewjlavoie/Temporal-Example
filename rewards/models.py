@@ -1,7 +1,7 @@
 """Data models for the rewards program entity workflow."""
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import StrEnum
 
 
@@ -37,7 +37,7 @@ class RewardEvent:
     points_change: int = 0
     points_after: int = 0
     tier_after: str = ""
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -49,7 +49,7 @@ class MembershipState:
     points: int = 0
     tier: str = RewardTier.BASIC.value
     is_active: bool = True
-    member_since: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    member_since: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     history: list[RewardEvent] = field(default_factory=list)
     total_points_earned: int = 0
     total_points_redeemed: int = 0
@@ -80,6 +80,8 @@ class EnrollmentInput:
     customer_id: str
     customer_name: str
     initial_points: int = 0  # Welcome bonus
+    # Carries full state across Continue-As-New; None on first enrollment
+    restored_state: MembershipState | None = None
 
 
 def evaluate_tier(points: int) -> RewardTier:

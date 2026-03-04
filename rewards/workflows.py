@@ -12,13 +12,13 @@ from temporalio import workflow
 from temporalio.common import RetryPolicy
 
 with workflow.unsafe.imports_passed_through():
-    from .activities import (
+    from rewards.activities import (
         apply_reward_redemption,
         process_offboarding,
         send_tier_change_notification,
         send_welcome_email,
     )
-    from .models import (
+    from rewards.models import (
         AddPointsSignal,
         EnrollmentInput,
         EventType,
@@ -106,7 +106,11 @@ class RewardsWorkflow:
         """
 
         # Initialize or restore state
-        if self._state is None:
+        if input.restored_state is not None:
+            # Continue-As-New: restore the carried-over state
+            self._state = input.restored_state
+        else:
+            # First enrollment: create fresh state
             self._state = MembershipState(
                 customer_id=input.customer_id,
                 customer_name=input.customer_name,
@@ -161,8 +165,17 @@ class RewardsWorkflow:
                     f"Event count ({self._state.event_count}) reached threshold. "
                     f"Performing Continue-As-New to reset history."
                 )
-                # Continue-As-New restarts the workflow, state passed as input
-                workflow.continue_as_new(input)
+                # Trim history and reset event count before carrying over
+                self._state.history = []
+                self._state.event_count = 0
+                workflow.continue_as_new(
+                    EnrollmentInput(
+                        customer_id=self._state.customer_id,
+                        customer_name=self._state.customer_name,
+                        initial_points=input.initial_points,
+                        restored_state=self._state,
+                    )
+                )
 
         # Customer is leaving the program
         workflow.logger.info(f"Processing departure for {self._state.customer_name}")

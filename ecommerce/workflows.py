@@ -10,7 +10,7 @@ from temporalio import workflow
 from temporalio.common import RetryPolicy
 
 with workflow.unsafe.imports_passed_through():
-    from .activities import (
+    from ecommerce.activities import (
         cancel_shipment,
         notify_customer,
         process_payment,
@@ -19,7 +19,7 @@ with workflow.unsafe.imports_passed_through():
         reserve_inventory,
         ship_package,
     )
-    from .models import (
+    from ecommerce.models import (
         InventoryResult,
         OrderInput,
         OrderStatus,

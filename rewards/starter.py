@@ -5,8 +5,8 @@ interactive menu to send Signals (add points, redeem, leave) and Queries
 (check status, check level) to the running workflow.
 
 Usage:
-    python -m rewards.starter                        # Interactive mode
-    python -m rewards.starter --scenario quick-demo   # Automated demo scenario
+    uv run python rewards/starter.py                        # Interactive mode
+    uv run python rewards/starter.py --scenario quick-demo   # Automated demo scenario
 """
 
 import argparse
@@ -14,9 +14,9 @@ import asyncio
 
 from temporalio.client import Client
 
-from .models import AddPointsSignal, EnrollmentInput, RedeemPointsSignal
-from .worker import TASK_QUEUE
-from .workflows import RewardsWorkflow
+from rewards.models import AddPointsSignal, EnrollmentInput, RedeemPointsSignal
+from rewards.worker import TASK_QUEUE
+from rewards.workflows import RewardsWorkflow
 
 
 async def run_interactive(client: Client, customer_id: str = "customer-42"):
