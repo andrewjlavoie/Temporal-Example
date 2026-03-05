@@ -76,7 +76,7 @@ class RewardsWorkflow:
     # Queries
 
     @workflow.query
-    def get_status(self) -> MembershipState:
+    def get_status(self) -> MembershipState | None:
         """Query: Returns the full membership state.
 
         This is the primary read path. Any client — a web UI, a support
@@ -130,6 +130,8 @@ class RewardsWorkflow:
                 start_to_close_timeout=timedelta(seconds=15),
                 retry_policy=RetryPolicy(maximum_attempts=3),
             )
+
+        assert self._state is not None
 
         workflow.logger.info(
             f"Rewards workflow active for {input.customer_name} "
@@ -210,6 +212,7 @@ class RewardsWorkflow:
 
     async def _process_add_points(self, signal: AddPointsSignal) -> None:
         """Process a point addition: update balance, evaluate tier, notify."""
+        assert self._state is not None
         old_tier = self._state.tier
         self._state.points += signal.points
         self._state.total_points_earned += signal.points
@@ -257,6 +260,7 @@ class RewardsWorkflow:
 
     async def _process_redemption(self, signal: RedeemPointsSignal) -> None:
         """Process a point redemption: validate, deduct, apply reward."""
+        assert self._state is not None
         if signal.points > self._state.points:
             workflow.logger.warning(
                 f"Redemption rejected for {self._state.customer_name}: "
@@ -325,6 +329,7 @@ class RewardsWorkflow:
         points_change: int = 0,
     ) -> None:
         """Record an event in the membership history."""
+        assert self._state is not None
         event = RewardEvent(
             event_type=event_type,
             description=description,

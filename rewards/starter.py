@@ -69,6 +69,7 @@ async def run_interactive(client: Client, customer_id: str = "customer-42"):
                 # Brief pause then show updated status
                 await asyncio.sleep(1)
                 status = await handle.query(RewardsWorkflow.get_status)
+                assert status is not None
                 print(f"  📊 Points: {status.points} | Tier: {status.tier}")
 
             elif choice == "2":
@@ -82,10 +83,12 @@ async def run_interactive(client: Client, customer_id: str = "customer-42"):
 
                 await asyncio.sleep(1)
                 status = await handle.query(RewardsWorkflow.get_status)
+                assert status is not None
                 print(f"  📊 Points: {status.points} | Tier: {status.tier}")
 
             elif choice == "3":
                 status = await handle.query(RewardsWorkflow.get_status)
+                assert status is not None
                 print(f"\n  {'─' * 50}")
                 print(f"  Customer:  {status.customer_name}")
                 print(f"  Points:    {status.points}")
@@ -176,6 +179,7 @@ async def run_automated_demo(client: Client):
         )
         await asyncio.sleep(0.5)
         status = await handle.query(RewardsWorkflow.get_status)
+        assert status is not None
         print(f"  +{pts:>4} pts ({source:>10}): {status.points} pts total → {status.tier}")
 
     print("\nTier check via Query: ", end="")
@@ -190,6 +194,7 @@ async def run_automated_demo(client: Client):
     )
     await asyncio.sleep(1)
     status = await handle.query(RewardsWorkflow.get_status)
+    assert status is not None
     print(f"  Redeemed 200 pts → {status.points} pts remaining, tier: {status.tier}")
 
     # Earn more to reach Platinum
@@ -206,11 +211,13 @@ async def run_automated_demo(client: Client):
         )
         await asyncio.sleep(0.5)
         status = await handle.query(RewardsWorkflow.get_status)
+        assert status is not None
         print(f"  +{pts:>4} pts ({source:>10}): {status.points} pts total → {status.tier}")
 
     # Final status
     print("\n--- Final Status (Query) ---")
     status = await handle.query(RewardsWorkflow.get_status)
+    assert status is not None
     print(f"  Points:    {status.points}")
     print(f"  Tier:      {status.tier}")
     print(f"  Earned:    {status.total_points_earned} (lifetime)")
