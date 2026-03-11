@@ -58,14 +58,14 @@ uv sync
 temporal server start-dev
 
 # E-Commerce Demo
-uv run python ecommerce/worker.py           # Terminal A: start worker
-uv run python ecommerce/starter.py          # Terminal B: happy path
-uv run python ecommerce/starter.py --fail-at shipping   # compensation demo
+uv run python -m ecommerce.worker           # Terminal A: start worker
+uv run python -m ecommerce.starter          # Terminal B: happy path
+uv run python -m ecommerce.starter --fail-at shipping   # compensation demo
 
 # Rewards Demo
-uv run python rewards/worker.py             # Terminal A: start worker
-uv run python rewards/starter.py            # Terminal B: interactive mode
-uv run python rewards/starter.py --scenario quick-demo   # automated walkthrough
+uv run python -m rewards.worker             # Terminal A: start worker
+uv run python -m rewards.starter            # Terminal B: interactive mode
+uv run python -m rewards.starter --scenario quick-demo   # automated walkthrough
 ```
 
 The `--scenario quick-demo` flag runs a scripted sequence: enroll a customer, earn points through Gold to Platinum, redeem, and leave — useful for a non-interactive walkthrough.
